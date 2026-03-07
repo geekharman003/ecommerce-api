@@ -2,8 +2,9 @@ import Product from "../models/product.model.js";
 
 export const addProduct = async (req, res) => {
   try {
-    const { title, description, price, imageUrl } = req.body;
-    const product = await Product.create({
+    const { userId,title, description, price, imageUrl } = req.body;
+    const product = await Product.insertOne({
+      userId,
       title,
       description,
       price,
@@ -71,3 +72,5 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
