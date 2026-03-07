@@ -5,7 +5,7 @@ const productSchema = new Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required:true
+      required: true,
     },
     title: {
       type: String,
@@ -21,6 +21,10 @@ const productSchema = new Schema(
     },
     imageUrl: {
       type: String,
+    },
+    stock: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true },
