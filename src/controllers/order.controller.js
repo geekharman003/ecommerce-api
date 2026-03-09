@@ -1,33 +1,30 @@
 import Cart from "../models/cart.model.js";
 import Order from "../models/order.model.js";
-import Product from "../models/product.model.js";
 
 export const createOrder = async (req, res) => {
   try {
     const { userId } = req.body;
 
     // find cart with userId
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate(
+      "items.productId",
+      "stock price",
+    );
+
+    if (!cart.items.length)
+      return res.status(404).json({ message: "No products added in the cart" });
 
     let totalAmount = 0; //stores the order total
 
     // for each cart item,fetch item price and add them into orderItems
-    const orderItems = await Promise.all(
-      cart.items.map(async (item) => {
-        const product = await Product.findById(item.productId).select(
-          "stock price",
-        );
+    const orderItems = cart.items.map((item) => {
+      if (item.quantity > item.productId.stock)
+        return res.status(400).json({ message: "Not enough stock available" });
 
-        if (item.quantity > product.stock)
-          return res
-            .status(400)
-            .json({ message: "Not enough stock available" });
+      totalAmount += item.productId.price * item.quantity;
 
-        totalAmount += product.price * item.quantity;
-
-        return item;
-      }),
-    );
+      return item;
+    });
 
     if (!orderItems.length)
       return res.status(404).json({ message: "No items added in the cart" });
@@ -38,11 +35,10 @@ export const createOrder = async (req, res) => {
       totalAmount,
     });
 
-    // finally decrease the stock value of each product
-    cart.items.forEach(async (item) => {
-      const product = await Product.findById(item.productId).select("stock");
-      product.stock -= item.quantity;
-      product.save();
+    // // finally decrease the stock value of each product
+    cart.items.forEach((item) => {
+      item.productId.stock -= item.quantity;
+      item.productId.save();
     });
 
     // empty the user cart
@@ -59,26 +55,12 @@ export const createOrder = async (req, res) => {
 export const viewOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const order = await Order.findById(orderId);
-
-    const orderedProducts = await Promise.all(
-      order.orderItems.map(async (item) => {
-        const product = await Product.findById(item.productId).select(
-          "title description price imageUrl",
-        );
-
-        return product;
-      }),
+    const order = await Order.findById(orderId).populate(
+      "orderItems.productId",
+      "title description price imageUrl",
     );
 
-    const orderDetails = {
-      orderedProducts,
-      totalAmount: order.totalAmount,
-      orderStatus: order.orderStatus,
-      paymentStatus: order.paymentStatus,
-    };
-
-    res.status(200).json(orderDetails);
+    res.status(200).json(order.orderItems);
   } catch (error) {
     console.log("Error in viewOrdere:", error);
     res.status(500).json({ message: "Internal server error" });

@@ -9,8 +9,15 @@ const orderSchema = new Schema(
     },
     orderItems: [
       {
-        productId: String,
-        quantity: Number,
+        productId: {
+          type: mongoose.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+        },
       },
     ],
     totalAmount: {

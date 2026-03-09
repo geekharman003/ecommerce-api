@@ -47,7 +47,7 @@ export const addItemsToCart = async (req, res) => {
       }
     }
 
-    res.status(200).json({ message: "item added into the cart" });
+    res.status(201).json({ message: "item added into the cart" });
   } catch (error) {
     console.log("Error in addItemsToCart:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -78,19 +78,12 @@ export const getAllCartItems = async (req, res) => {
   try {
     const userId = "69ac044d953513b8a2afc923";
 
-    const cart = await Cart.findOne({ userId });
-
-    const cartItems = await Promise.all(
-      cart.items.map(async (item) => {
-        const productInfo = await Product.findById(item.productId).select(
-          "title description price imageUrl",
-        );
-
-        return productInfo;
-      }),
+    const cart = await Cart.findOne({ userId }).populate(
+      "items.productId",
+      "title description price imageUrl",
     );
 
-    res.status(200).json(cartItems);
+    res.status(200).json(cart.items);
   } catch (error) {
     console.log("Error in getAllCartItems:", error);
     res.status(500).json({ message: "Internal server error" });
