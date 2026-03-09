@@ -8,6 +8,7 @@ import productRoutes from "./routes/product.route.js";
 import adminRoutes from "./routes/admin.route.js";
 import userRoutes from "./routes/user.route.js";
 import cartRoutes from "./routes/cart.route.js";
+import orderRoutes from "./routes/order.route.js"
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -17,6 +18,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/admin/products", adminRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 
 connectToDB()
   .then(() => {
