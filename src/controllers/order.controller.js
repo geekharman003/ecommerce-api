@@ -3,7 +3,7 @@ import Order from "../models/order.model.js";
 
 export const createOrder = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { _id: userId } = req.user;
 
     // find cart with userId
     const cart = await Cart.findOne({ userId }).populate(
@@ -19,7 +19,9 @@ export const createOrder = async (req, res) => {
     // for each cart item,fetch item price and add them into orderItems
     const orderItems = cart.items.map((item) => {
       if (item.quantity > item.productId.stock)
-        return res.status(400).json({ message: "Not enough stock available" });
+        return res.status(400).json({
+          message: `Not enough stock available for ${item.productId.title}`,
+        });
 
       totalAmount += item.productId.price * item.quantity;
 
@@ -52,7 +54,7 @@ export const createOrder = async (req, res) => {
   }
 };
 
-export const viewOrder = async (req, res) => {
+export const getOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const order = await Order.findById(orderId).populate(
@@ -61,6 +63,21 @@ export const viewOrder = async (req, res) => {
     );
 
     res.status(200).json(order.orderItems);
+  } catch (error) {
+    console.log("Error in viewOrdere:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getOrders = async (req, res) => {
+  try {
+    const { _id: userId } = req.user;
+    const orders = await Order.find({ userId }).populate(
+      "orderItems.productId",
+      "title description price imageUrl",
+    );
+
+    res.status(200).json(orders);
   } catch (error) {
     console.log("Error in viewOrdere:", error);
     res.status(500).json({ message: "Internal server error" });

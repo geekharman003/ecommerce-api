@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="./shop.html">Shop</a></li>
+          <li><a href="./products.html">Products</a></li>
+          <li><a href="./cart.html">Cart</a></li>
+          <li><a href="./orders.html">Orders</a></li>
+          <li><a href="./add-product.html">Add Product</a></li>
+          <li><a href="./admin-products.html">Admin Products</a></li>
+          <li onclick="logout()"><a href="#">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div id="orders-container"></div>
+    <script src="verifyToken.js"></script>
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchOrders();
+      });
+    </script>
+  </body>
+</html>

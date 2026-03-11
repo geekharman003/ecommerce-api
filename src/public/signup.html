@@ -3,11 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
+    <title>Signup</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <form action="/api/auth/login" method="post" id="login-form">
+    <form action="/api/auth/signup" method="post" id="signup-form">
+      <label for="name">Name:</label>
+      <br />
+      <input type="text" id="name" name="name" required />
+      <br /><br />
       <label for="email">Email:</label>
       <br />
       <input type="email" id="email" name="email" required />
@@ -16,14 +20,11 @@
       <br />
       <input type="password" id="password" name="password" />
       <br />
-      <button type="submit">Login</button>
-      <br />
-      <br />
-
+      <button type="submit">Signup</button>
+      <br /><br />
       <p id="redirect-page">
-        New User? <a style="color: blue" href="./signup.html">Signup</a>
+        Already a member? <a style="color: blue" href="./index.html">Login</a>
       </p>
     </form>
-    <!-- <script src="verifyToken.js"></script> -->
   </body>
 </html>

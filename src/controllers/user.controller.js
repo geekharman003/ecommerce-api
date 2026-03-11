@@ -37,7 +37,3 @@ export const findUserById = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-export const addToCart = async (req,res) => {
-    
-}

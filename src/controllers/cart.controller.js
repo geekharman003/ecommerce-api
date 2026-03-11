@@ -3,7 +3,11 @@ import Product from "../models/product.model.js";
 
 export const addItemsToCart = async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body;
+    const { _id: userId } = req.user;
+    let { productId, quantity } = req.body;
+
+    quantity = Number(quantity);
+
     if (!quantity)
       return res.status(400).json({ message: "quantity is required" });
 
@@ -30,7 +34,7 @@ export const addItemsToCart = async (req, res) => {
       // check added quantity + current quantity
       let isFound = false;
       for (let item of cart.items) {
-        if (item.productId === productId) {
+        if (item.productId.toString() === productId) {
           isFound = true;
           if (item.quantity + quantity > product.stock)
             return res
@@ -56,12 +60,13 @@ export const addItemsToCart = async (req, res) => {
 
 export const deleteItemsFromCart = async (req, res) => {
   try {
-    const { productId, userId } = req.body;
+    const { _id: userId } = req.user;
+    const { productId } = req.params;
 
     const cart = await Cart.findOne({ userId });
 
     cart.items.forEach((item, index) => {
-      if (item.productId === productId) {
+      if (item.productId.toString() === productId) {
         cart.items.splice(index, 1);
         cart.save();
       }
@@ -76,12 +81,16 @@ export const deleteItemsFromCart = async (req, res) => {
 
 export const getAllCartItems = async (req, res) => {
   try {
-    const userId = "69ac044d953513b8a2afc923";
+    const { _id: userId } = req.user;
 
     const cart = await Cart.findOne({ userId }).populate(
       "items.productId",
       "title description price imageUrl",
     );
+
+    if(!cart){
+      return res.status(404).json({message:"No items in the cart"})
+    }
 
     res.status(200).json(cart.items);
   } catch (error) {

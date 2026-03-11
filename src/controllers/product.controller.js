@@ -2,14 +2,16 @@ import Product from "../models/product.model.js";
 
 export const addProduct = async (req, res) => {
   try {
-    const { userId,title, description, price, imageUrl,stock } = req.body;
+    const { _id: userId } = req.user;
+    const { title, description, price, imageUrl, stock } = req.body;
+
     const product = await Product.insertOne({
       userId,
       title,
       description,
       price,
       imageUrl,
-      stock
+      stock,
     });
 
     res.status(201).json(product);
@@ -19,9 +21,21 @@ export const addProduct = async (req, res) => {
   }
 };
 
-export const getProducts = async (req, res) => {
+export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.log("Error in getAllProducts:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getProducts = async (req, res) => {
+  try {
+    const { _id: userId } = req.user;
+    const products = await Product.find({ userId });
     res.status(200).json(products);
   } catch (error) {
     console.log("Error in getProducts:", error);
@@ -65,7 +79,6 @@ export const deleteProduct = async (req, res) => {
   try {
     const { productId } = req.params;
     const deletedProductInfo = await Product.deleteOne({ _id: productId });
-    console.log(deletedProductInfo);
 
     res.status(200).json({ message: "product deleted successfully" });
   } catch (error) {
@@ -73,5 +86,3 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
