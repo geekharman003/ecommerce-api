@@ -24,7 +24,7 @@ app.use("/api/orders", orderRoutes);
 connectToDB()
   .then(() => {
     app.listen(process.env.PORT, () => {
-      console.log("server is runnig on port 3000");
+      console.log("server is running on port 3000");
     });
   })
   .catch((err) => console.log("Error connecting with server:", err));

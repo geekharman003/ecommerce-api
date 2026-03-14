@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Product</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -20,7 +25,7 @@
         </ul>
       </nav>
     </header>
-    <form action="/api/products" method="post" class="add-product-form">
+    <form onsubmit="addProduct(event,'non-admin')" class="add-product-form">
       <label for="title">Title:</label>
       <br />
       <input type="text" id="title" name="title" required />
@@ -55,6 +60,10 @@
       <button type="submit">Add Product</button>
     </form>
     <script src="verifyToken.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/toastify-js"
+    ></script>
     <script src="script.js"></script>
   </body>
 </html>

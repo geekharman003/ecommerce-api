@@ -69,7 +69,41 @@ async function addToCart(e, productId) {
     });
 
     const data = await response.json();
-    console.log(data);
+    if (response.ok) {
+      Toastify({
+        text: "Product added to the cart",
+        duration: 3000,
+        destination: "",
+        newWindow: true,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "green",
+        },
+        offset: {
+          y: 50,
+        },
+      }).showToast();
+    } else {
+      Toastify({
+        text: "Error during adding product into cart",
+        duration: 3000,
+        destination: "",
+        newWindow: true,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "red",
+        },
+        offset: {
+          y: 50,
+        },
+      }).showToast();
+    }
   } catch (error) {
     console.log("Error in addToCart:", error);
   }
@@ -128,9 +162,42 @@ async function deleteProduct(productId, product) {
       method: "DELETE",
     });
 
-    const data = await response.json();
-    console.log(data);
-    product.remove();
+    if (response.ok) {
+      product.remove();
+      Toastify({
+        text: "Product deleted successfully",
+        duration: 3000,
+        destination: "",
+        newWindow: true,
+        close: true,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+          background: "green",
+        },
+        offset: {
+          y: 50,
+        },
+      }).showToast();
+    } else {
+      Toastify({
+        text: "Error during deleting product!",
+        duration: 3000,
+        destination: "",
+        newWindow: true,
+        close: true,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+          background: "red",
+        },
+        offset: {
+          y: 50,
+        },
+      }).showToast();
+    }
   } catch (error) {
     console.log("Error in deleteProduct:", error);
   }
@@ -209,11 +276,45 @@ async function deleteItemFromCart(item, cartItem) {
     });
     const data = await response.json();
 
-    cartItem.remove();
+    if (response.ok) {
+      cartItem.remove();
+      Toastify({
+        text: "Cart item deleted successfully",
+        duration: 3000,
+        destination: "",
+        newWindow: true,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "green",
+        },
+        offset: {
+          y: 50,
+        },
+        onClick: function () {}, // Callback after click
+      }).showToast();
 
-    const itemTotal = item.productId.price * item.quantity;
+      const itemTotal = item.productId.price * item.quantity;
 
-    updateCartTotal(itemTotal);
+      updateCartTotal(itemTotal);
+    } else {
+      Toastify({
+        text: "Error during deleting cart item!",
+        duration: 3000,
+        destination: "",
+        newWindow: true,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "red",
+        },
+        onClick: function () {}, // Callback after click
+      }).showToast();
+    }
   } catch (error) {
     console.log("Error in deleteItemFromCart:", error);
   }
@@ -288,20 +389,85 @@ function showOrderItems(orderItem, orderElem) {
   orderItemElem.className = "order-item";
   orderItemElem.innerHTML = `
   <div class="order-item-img">
-    <img src=${orderItem.productId.imageUrl} alt="order item image" />
+    <img src=${orderItem?.productId?.imageUrl} alt="order item image" />
   </div>
   <div class="order-item-details">
-    <p class="order-item-title"><b>Product Title</b>: ${orderItem.productId.title}</p>
-    <p class="order-item-description"><b>Description:</b> ${orderItem.productId.description}</p>
-    <p class="order-item-quantity"><b>Quantity:</b> ${orderItem.quantity}</p>
+    <p class="order-item-title"><b>Product Title</b>: ${orderItem?.productId?.title}</p>
+    <p class="order-item-description"><b>Description:</b> ${orderItem?.productId?.description}</p>
+    <p class="order-item-quantity"><b>Quantity:</b> ${orderItem?.quantity}</p>
     
   </div>
   `;
 
   orderElem.appendChild(orderItemElem);
 }
-
 // orders page functions end
+
+//add product page functions start
+
+async function addProduct(e, role) {
+  e.preventDefault();
+
+  const title = e.target?.elements?.title?.value;
+  const description = e.target?.elements?.description?.value;
+  const price = e.target?.elements?.price?.value;
+  const imageUrl = e.target?.elements?.imageUrl?.value;
+  const stock = e.target?.elements?.stock?.value;
+
+  let url = "";
+
+  if (role === "admin") {
+    url = "/api/admin/products";
+  } else {
+    url = "/api/products";
+  }
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title, description, price, imageUrl, stock }),
+  });
+
+  if (response.ok) {
+    Toastify({
+      text: "Product added Successfully",
+      duration: 3000,
+      destination: "",
+      newWindow: true,
+      close: true,
+      gravity: "top",
+      position: "right",
+      stopOnFocus: true,
+      style: {
+        background: "green",
+      },
+      offset: {
+        y: 50,
+      },
+    }).showToast();
+  } else {
+    Toastify({
+      text: "Error during adding product",
+      duration: 3000,
+      destination: "",
+      newWindow: true,
+      close: true,
+      gravity: "top",
+      position: "right",
+      stopOnFocus: true,
+      style: {
+        background: "red",
+      },
+      offset: {
+        y: 50,
+      },
+    }).showToast();
+  }
+}
+
+//add product page functions start
 
 // logout
 async function logout() {
